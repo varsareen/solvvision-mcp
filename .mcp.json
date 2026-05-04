@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "solvvision-mcp": {
+      "command": "node",
+      "args": ["dist/server.js"]
+    }
+  }
+}
