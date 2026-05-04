@@ -38,3 +38,6 @@ coverage/
 .config/
 .mcpregistry_github_token
 .mcpregistry_registry_token
+
+# Multi-instance credentials (never commit)
+instances.json
