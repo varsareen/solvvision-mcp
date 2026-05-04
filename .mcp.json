@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "solvvision-mcp": {
-      "command": "node",
-      "args": ["dist/server.js"]
+      "command": "sh",
+      "args": ["-c", "set -a; . ./.env; set +a; exec node dist/server.js"]
     }
   }
 }
