@@ -13,7 +13,9 @@ All runs are tracked as GitHub Issues with the `validation` label.
 
 ## Phase 2 runs
 
-Phase 2 not yet started. See [VALIDATION.md](../VALIDATION.md) for the plan.
+| Run | Issue | PDI | Date | Result |
+|---|---|---|---|---|
+| 1 | [#4](../../../issues/4) | dev229998 | 2026-05-04 | 67 pass / 12 fail / 4 fishy / 261 skipped (344 total; 220+ skips = NOW_ASSIST guard) |
 
 ## Updating this file
 
