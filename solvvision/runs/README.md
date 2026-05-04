@@ -9,7 +9,7 @@ All runs are tracked as GitHub Issues with the `validation` label.
 
 | Run | Issue | PDI | Date | Result |
 |---|---|---|---|---|
-| _(none yet — open the first issue using the [Validation run template](../../.github/ISSUE_TEMPLATE/validation-run.md))_ | | | | |
+| 1 | [#2](../../../issues/2) | dev229998 | 2026-05-04 | 9 pass / 0 fail / 1 fishy / 20 skipped (20 skips = NOW_ASSIST guard; finding #3 search_knowledge relevance) |
 
 ## Phase 2 runs
 
