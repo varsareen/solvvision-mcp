@@ -24,8 +24,8 @@ GitHub issues #3, #5–#12.
 
 ## Wave status
 
-| Wave | Status |
-|---|---|
-| Wave 1 | Not started |
-| Wave 2 | Not started |
-| Wave 3 | Not started |
+| Wave | Branch | Status | Merged | Results |
+|---|---|---|---|---|
+| Wave 1 | `wave-1-low-complexity-fixes` | ✅ Merged | 2026-05-06 | 216 Pass / 13 Fail / 5 Fishy / 38 Skip — 272 tools tested; 5 code fixes applied; findings #13–25 escalated to Wave 2 |
+| Wave 2 | `wave-2-medium-complexity-fixes` | 🔲 Not started | — | Findings #10, #13–25 in scope |
+| Wave 3 | `wave-3-high-complexity-fixes` | 🔲 Not started | — | Findings #5, #6, #11, #12 in scope |
