@@ -264,3 +264,26 @@ Plugin absent: `sn_hr_core_case` returns INVALID_REQUEST on PDI. All 16 tools sk
 | `schedule_notification` | ✅ Pass | NOT_FOUND (fake notification_id) |
 
 **Batch 9 total: 14 Pass, 0 Fail, 0 Fishy, 0 Skipped**
+
+### Batch 10 — performance.ts (15 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_pa_indicators` | ✅ Pass | 3 indicators returned |
+| `get_pa_indicator` | ✅ Pass | Returned "% of incidents resolved by first assigned group" |
+| `get_pa_scorecard` | ✅ Pass | NOT_FOUND (fake indicator_sys_id) |
+| `get_pa_time_series` | ✅ Pass | 0 results (fake indicator_sys_id) |
+| `list_pa_breakdowns` | ✅ Pass | 3 breakdowns returned |
+| `list_pa_dashboards` | ✅ Pass | 3 dashboards returned |
+| `get_pa_dashboard` | ✅ Pass | NOT_FOUND (fake name) |
+| `list_homepages` | ❌ Fail | INVALID_REQUEST: table `sys_ui_hp` does not exist — escalate to Wave 2 |
+| `list_pa_jobs` | ❌ Fail | INVALID_REQUEST: table `pa_job` does not exist — escalate to Wave 2 |
+| `get_pa_job` | ❌ Fail | INVALID_REQUEST: same wrong table `pa_job` |
+| `create_dashboard` | ✅ Pass | INSUFFICIENT_PRIVILEGES — guard removed; PDI role limitation |
+| `update_dashboard` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `check_table_completeness` | ✅ Pass | Analyzed incident (priority 100%, state 100%, assigned_to 90%) |
+| `get_table_record_count` | ✅ Pass | 81 incidents counted |
+| `compare_record_counts` | ✅ Pass | Returns counts for incident, change_request, problem |
+
+**Batch 10 total: 12 Pass, 3 Fail, 0 Fishy, 0 Skipped**
+**Fail escalations: `list_homepages` (wrong table sys_ui_hp), `list_pa_jobs` and `get_pa_job` (wrong table pa_job)**
