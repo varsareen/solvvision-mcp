@@ -65,6 +65,8 @@ Test records created during Wave 1 guard testing — delete before branch merge:
 | `sys_script_client` | `68dc47fb83640310ad3cc4d0deaad326` | `__wave1_guard_test__` | Batch 1 |
 | `sys_ui_policy` | `60dc07bb83a40310ad3cc4d0deaad309` | `__wave1_guard_test__` | Batch 1 |
 | `sys_ui_action` | `b8dc07bb83a40310ad3cc4d0deaad39d` | `__wave1_guard_test__` | Batch 1 |
+| `sn_risk_risk` | `4f2e0ff383e40310ad3cc4d0deaad3fb` | `__wave1_guard_test__` (RK0020248) | Batch 5 |
+| `sn_si_incident` | `2b2e4ff383e40310ad3cc4d0deaad373` | `__wave1_guard_test__` (SIR0010002) | Batch 5 |
 | `rm_story` | `cdbdcb7383e40310ad3cc4d0deaad3ce` | `__wave1_guard_test__` (STRY0010001) | Batch 2 |
 | `rm_epic` | `e5bd0f7383e40310ad3cc4d0deaad3d1` | `__wave1_guard_test__` (EPIC0010001) | Batch 2 |
 | `rm_scrum_task` | `29bd4f7383e40310ad3cc4d0deaad303` | `__wave1_guard_test__` (STSK0011002) | Batch 2 |
@@ -128,3 +130,29 @@ Plugin absent: `sn_hr_core_case` returns INVALID_REQUEST on PDI. All 16 tools sk
 | `list_csm_products` | ✅ Pass | 3 products returned |
 
 **Batch 4 total: 11 Pass, 0 Fail, 0 Fishy, 0 Skipped**
+
+### Batch 5 — security.ts (19 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_security_incidents` | ✅ Pass | 3 SIR records |
+| `get_security_incident` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `create_security_incident` | ✅ Pass | Created SIR0010002 — cleanup needed |
+| `update_security_incident` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_vulnerabilities` | ✅ Pass | 3 CVE entries |
+| `get_vulnerability` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `update_vulnerability` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_grc_risks` | ✅ Pass | 3 risk records |
+| `get_grc_risk` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `create_grc_risk` | ✅ Pass | Created RK0020248 — cleanup needed |
+| `list_grc_controls` | ✅ Pass | 3 controls |
+| `get_threat_intelligence` | ✅ Pass | 3 IOC records |
+| `list_security_playbooks` | ⏭️ Skip | sn_si_playbook table absent (partial SecOps plugin) |
+| `run_security_playbook` | ⏭️ Skip | sn_si_playbook_execution table absent |
+| `get_security_dashboard` | ✅ Pass | INSUFFICIENT_PRIVILEGES — guard removed; PDI role limit |
+| `scan_vulnerabilities` | ✅ Pass | INVALID_REQUEST from handler (ci_sys_ids required) — guard removed |
+| `list_compliance_policies` | ✅ Pass | 3 policies |
+| `get_compliance_assessment` | ✅ Pass | INVALID_REQUEST from handler (sys_id required) — guard removed |
+| `list_audit_results` | ⏭️ Skip | sn_audit_result table absent (partial SecOps plugin) |
+
+**Batch 5 total: 16 Pass, 0 Fail, 0 Fishy, 3 Skipped**
