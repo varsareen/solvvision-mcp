@@ -306,7 +306,7 @@ export async function executeCatalogToolCall(
         data.approver = args.approver;
       }
       if (args.condition) data.condition = args.condition;
-      const result = await client.createRecord('sysapproval_rule', data);
+      const result = await client.createRecord('sysrule_approvals', data);
       return {
         ...result,
         summary: `Created approval rule "${args.name}" for table "${args.table}" with ${args.approver_type} approver`,
