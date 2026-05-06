@@ -80,6 +80,9 @@ Test records created during Wave 1 guard testing — delete before branch merge:
 | `sys_import_set_run` | `df9f8b3b83e40310ad3cc4d0deaad3e8` | TH0001112 (fake transform run) | Batch 8 |
 | `sysevent_register` | `0cafcb3b83e40310ad3cc4d0deaad3c9` | `wave1.guard_test` event registration | Batch 8 |
 | `sysevent` | `d0afcb3b83e40310ad3cc4d0deaad3f9` | `incident.created` fired event | Batch 8 |
+| `sysevent_email_action` | `cf0093bb83e40310ad3cc4d0deaad396` | `__wave1_guard_test__` notification | Batch 9 |
+| `sys_attachment` | `6c10d3bb83e40310ad3cc4d0deaad322` | `wave1_guard_test.txt` attachment | Batch 9 |
+| `sys_email` | `781017bb83e40310ad3cc4d0deaad338` | `__wave1_guard_test__` broadcast email | Batch 9 |
 
 ### Batch 2 — agile.ts (9 tools)
 
@@ -240,3 +243,24 @@ Plugin absent: `sn_hr_core_case` returns INVALID_REQUEST on PDI. All 16 tools sk
 
 **Batch 8 total: 17 Pass, 0 Fail, 2 Fishy, 0 Skipped**
 **Fishy escalations: `get_event_registry_entry` and `register_event` (wrong field `name` vs `event_name` on sysevent_register)**
+
+### Batch 9 — notification.ts (14 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_notifications` | ✅ Pass | 3 notifications returned |
+| `get_notification` | ✅ Pass | NOT_FOUND (fake name) |
+| `create_notification` | ✅ Pass | Created `__wave1_guard_test__` — cleanup: `cf0093bb83e40310ad3cc4d0deaad396` |
+| `update_notification` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_email_logs` | ✅ Pass | 3 email log entries returned |
+| `get_email_log` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_attachments` | ✅ Pass | 0 results (no attachments on fake record) |
+| `get_attachment_metadata` | ✅ Pass | NOT_FOUND (fake attachment_sys_id) |
+| `delete_attachment` | ✅ Pass | NOT_FOUND (fake attachment_sys_id) |
+| `upload_attachment` | ✅ Pass | Uploaded 4-byte txt — cleanup: `6c10d3bb83e40310ad3cc4d0deaad322` |
+| `list_email_templates` | ✅ Pass | 3 templates returned |
+| `list_notification_subscriptions` | ✅ Pass | 0 results |
+| `send_emergency_broadcast` | ✅ Pass | Created queued sys_email (fake recipient) — cleanup: `781017bb83e40310ad3cc4d0deaad338` |
+| `schedule_notification` | ✅ Pass | NOT_FOUND (fake notification_id) |
+
+**Batch 9 total: 14 Pass, 0 Fail, 0 Fishy, 0 Skipped**
