@@ -87,6 +87,13 @@ Test records created during Wave 1 guard testing — delete before branch merge:
 | `sys_properties` | _(name-based)_ | `x.wave1.guard.test.2` | Batch 11 |
 | `sys_update_set` | `05c09f3f83e40310ad3cc4d0deaad351` | `__wave1_guard_test__` update set | Batch 12 |
 | `sys_cs_topic` | `61c09f3f83e40310ad3cc4d0deaad3ca` | `__wave1_guard_test__` VA topic | Batch 13 |
+| `sysauto_script` | `ffa257f383280310ad3cc4d0deaad3a2` | `__wave1_guard_test__` scheduled job | Batch 14 |
+| `sys_report` | `54b297f383280310ad3cc4d0deaad330` | `__wave1_guard_test__` report | Batch 14 |
+| `sysauto_report` | `e3b25bf383280310ad3cc4d0deaad3fa` | scheduled report delivery (fake report_id) | Batch 14 |
+| `pa_indicators` | `b3b29bf383280310ad3cc4d0deaad302` | `__wave1_guard_test__` KPI | Batch 14 |
+| `alm_asset` | `3dd2dff383280310ad3cc4d0deaad315` | `__wave1_guard_test__` / WAVE1-GUARD-TEST-001 | Batch 15 |
+| `change_request` | `0af2973783280310ad3cc4d0deaad395` | CHG0030059 `__wave1_guard_test__ DevOps change` | Batch 16 |
+| `sys_app` | `95131f3783280310ad3cc4d0deaad39a` | `__wave1_guard_test__` scope `x_wave1_grd_tst` | Batch 17 |
 
 ### Batch 2 — agile.ts (9 tools)
 
@@ -340,3 +347,88 @@ Plugin absent: `sn_hr_core_case` returns INVALID_REQUEST on PDI. All 16 tools sk
 
 **Batch 13 total: 5 Pass, 2 Fail, 0 Fishy, 0 Skipped**
 **Fail escalations: `get_va_conversation` (wrong table sys_cs_conversation_message), `list_va_categories` (wrong table sys_cs_category)**
+
+### Batch 14 — reporting.ts (17 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_reports` | ✅ Pass | 3 reports returned |
+| `get_report` | ✅ Pass | NOT_FOUND (fake name) |
+| `run_aggregate_query` | ✅ Pass | 5 priority groups returned for incident |
+| `trend_query` | ✅ Pass | 2-month trend data returned |
+| `get_performance_analytics` | ❌ Fail | Fallback hits invalid table `pa_job_log` (INVALID_REQUEST) — escalate to Wave 2 |
+| `export_report_data` | ✅ Pass | 3 incidents exported |
+| `get_sys_log` | ✅ Pass | QUERY_FAILED (syslog access restricted by role — not a guard error) |
+| `list_scheduled_jobs` | ✅ Pass | 3 jobs returned |
+| `get_scheduled_job` | ✅ Pass | NOT_FOUND (fake name) |
+| `create_scheduled_job` | ✅ Pass | Created `__wave1_guard_test__` — cleanup: `ffa257f383280310ad3cc4d0deaad3a2` |
+| `update_scheduled_job` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `trigger_scheduled_job` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `create_report` | ✅ Pass | Created `__wave1_guard_test__` — cleanup: `54b297f383280310ad3cc4d0deaad330` |
+| `update_report` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_job_run_history` | ❌ Fail | INVALID_REQUEST: table `sysauto_trigger_log` does not exist — previously escalated to Wave 2 (Fix #10) |
+| `create_scheduled_report` | ✅ Pass | Created sysauto_report (Wave 1 fix verified) — cleanup: `e3b25bf383280310ad3cc4d0deaad3fa` |
+| `create_kpi` | ✅ Pass | Created pa_indicators `__wave1_guard_test__` — cleanup: `b3b29bf383280310ad3cc4d0deaad302` |
+
+**Batch 14 total: 15 Pass, 2 Fail, 0 Fishy, 0 Skipped**
+**Fail escalations: `get_performance_analytics` (fallback hits invalid table pa_job_log), `list_job_run_history` (invalid table sysauto_trigger_log — known, Fix #10)**
+
+### Batch 15 — itam.ts (10 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_assets` | ✅ Pass | 3 assets returned |
+| `get_asset` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `create_asset` | ✅ Pass | Created `WAVE1-GUARD-TEST-001` — cleanup: `3dd2dff383280310ad3cc4d0deaad315` |
+| `update_asset` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `retire_asset` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_software_licenses` | ✅ Pass | 3 licenses returned |
+| `get_license_compliance` | ✅ Pass | 36 licenses analyzed |
+| `list_asset_contracts` | ✅ Pass | 3 contracts returned |
+| `track_asset_lifecycle` | ✅ Pass | NOT_FOUND (fake asset_tag) |
+| `get_license_optimization` | ✅ Pass | 36 license recommendations returned |
+
+**Batch 15 total: 10 Pass, 0 Fail, 0 Fishy, 0 Skipped**
+
+### Batch 16 — devops.ts (7 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_devops_pipelines` | ⏭️ Skip | INVALID_REQUEST: table `sn_devops_pipeline` — DevOps plugin absent |
+| `get_devops_pipeline` | ⏭️ Skip | INVALID_REQUEST: table `sn_devops_pipeline` — DevOps plugin absent |
+| `list_deployments` | ⏭️ Skip | INVALID_REQUEST: table `sn_devops_deploy_task` — DevOps plugin absent |
+| `get_deployment` | ⏭️ Skip | INVALID_REQUEST: table `sn_devops_deploy_task` — DevOps plugin absent |
+| `create_devops_change` | ✅ Pass | Creates standard `change_request` (no DevOps plugin needed) — cleanup: `0af2973783280310ad3cc4d0deaad395` CHG0030059 |
+| `track_deployment` | ⏭️ Skip | INVALID_REQUEST: table `sn_devops_deploy_task` — DevOps plugin absent |
+| `get_devops_insights` | ⏭️ Skip | INVALID_REQUEST: table `sn_devops_deploy_task` — DevOps plugin absent |
+
+**Batch 16 total: 1 Pass, 0 Fail, 0 Fishy, 6 Skipped (DevOps plugin absent)**
+
+### Batch 17 — app-studio.ts (4 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_scoped_apps` | ✅ Pass | 3 apps returned (guard removed — was Phase 1 NOW_ASSIST-blocked) |
+| `get_scoped_app` | ✅ Pass | NOT_FOUND (fake scope) |
+| `create_scoped_app` | ✅ Pass | Created `__wave1_guard_test__` scope `x_wave1_grd_tst` — cleanup: `95131f3783280310ad3cc4d0deaad39a` |
+| `update_scoped_app` | ✅ Pass | NOT_FOUND (fake sys_id) |
+
+**Batch 17 total: 4 Pass, 0 Fail, 0 Fishy, 0 Skipped**
+
+### Batch 18 — ml.ts (10 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `ml_predict_change_risk` | ✅ Pass | Historical analysis returned (predicted_risk: low) |
+| `ml_detect_anomalies` | ✅ Pass | 0 anomalies in 3 incidents over 7 days |
+| `ml_forecast_incidents` | ✅ Pass | Forecast returned (avg_daily_rate: 0.1) |
+| `ml_train_incident_classifier` | ✅ Pass | PI solution found; training endpoint unavailable — returns training_failed gracefully |
+| `ml_train_change_risk` | ✅ Pass | Same graceful failure path |
+| `ml_train_anomaly_detector` | ✅ Pass | Returns queue message without API call |
+| `ml_evaluate_model` | ✅ Pass | NOT_FOUND (fake model_sys_id on ml_solution) |
+| `ml_model_training_history` | ❌ Fail | INVALID_REQUEST: table `ml_solution_version` does not exist — escalate to Wave 2 |
+| `ml_virtual_agent_nlu` | ✅ Pass | 0 conversations in 7-day window |
+| `ml_process_optimization` | ✅ Pass | 1 resolved incident analyzed, bottleneck LOW |
+
+**Batch 18 total: 9 Pass, 1 Fail, 0 Fishy, 0 Skipped**
+**Fail escalation: `ml_model_training_history` (invalid table ml_solution_version)**
