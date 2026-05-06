@@ -167,13 +167,13 @@ export async function executeAtfToolCall(
     case 'list_atf_test_results': {
       let query = '';
       if (args.suite_result_sys_id) query = `test_suite_result=${args.suite_result_sys_id}`;
-      const resp = await client.queryRecords({ table: 'sys_atf_result', query: query || undefined, limit: args.limit || 50, fields: 'sys_id,test,status,message,test_suite_result,sys_updated_on' });
+      const resp = await client.queryRecords({ table: 'sys_atf_test_result', query: query || undefined, limit: args.limit || 50, fields: 'sys_id,test,status,message,test_suite_result,sys_updated_on' });
       return { count: resp.count, results: resp.records };
     }
     case 'get_atf_failure_insight': {
       if (!args.result_sys_id) throw new ServiceNowError('result_sys_id is required', 'INVALID_REQUEST');
       // ATF Failure Insight: query sys_atf_failure_insight table
-      const resp = await client.queryRecords({ table: 'sys_atf_failure_insight', query: `test_suite_result=${args.result_sys_id}` });
+      const resp = await client.queryRecords({ table: 'sys_atf_what_changed', query: `test_suite_result=${args.result_sys_id}` });
       return {
         result_sys_id: args.result_sys_id,
         failure_insight: resp.records,

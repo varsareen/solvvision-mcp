@@ -419,7 +419,7 @@ export async function executeReportingToolCall(
       requireWrite();
       if (!args.report_id || !args.frequency || !args.recipients)
         throw new ServiceNowError('report_id, frequency, and recipients are required', 'INVALID_REQUEST');
-      const result = await client.createRecord('sys_report_schedule', {
+      const result = await client.createRecord('sysauto_report', {
         report: args.report_id,
         frequency: args.frequency,
         email: args.recipients,
