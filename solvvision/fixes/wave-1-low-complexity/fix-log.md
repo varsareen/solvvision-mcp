@@ -94,6 +94,15 @@ Test records created during Wave 1 guard testing — delete before branch merge:
 | `alm_asset` | `3dd2dff383280310ad3cc4d0deaad315` | `__wave1_guard_test__` / WAVE1-GUARD-TEST-001 | Batch 15 |
 | `change_request` | `0af2973783280310ad3cc4d0deaad395` | CHG0030059 `__wave1_guard_test__ DevOps change` | Batch 16 |
 | `sys_app` | `95131f3783280310ad3cc4d0deaad39a` | `__wave1_guard_test__` scope `x_wave1_grd_tst` | Batch 17 |
+| `sys_ux_page` | `b614173b83280310ad3cc4d0deaad32e` | `__wave1_guard_test__` UIB page | Batch 19 |
+| `sys_ux_macroponent` | `e714173b83280310ad3cc4d0deaad3ea` | `wave1-guard-test` component | Batch 19 |
+| `sys_ux_data_broker_transform` | `a524973b83280310ad3cc4d0deaad39d` | `wave1-guard-test` data broker | Batch 19 |
+| `sys_aw_list` | `3124973b83280310ad3cc4d0deaad3dc` | `wave1 guard test list` workspace list | Batch 19 |
+| `sys_ux_app_route` | `0a24973b83280310ad3cc4d0deaad3f4` | `/wave1-guard-test` UX route | Batch 19 |
+| `sys_ux_app_config` | `4224973b83280310ad3cc4d0deaad3ff` | `__wave1_guard_test__` UX experience | Batch 19 |
+| `sys_sg_offline_sync` | `dd441f3b83280310ad3cc4d0deaad3a5` | incident offline sync config | Batch 20 |
+| `sys_push_notification` | `21445f3b83280310ad3cc4d0deaad303` | `wave1 guard test notification` | Batch 20 |
+| `cmdb_ci` | `4f64137b83280310ad3cc4d0deaad302` | `__wave1_guard_test__` CI | Batch 21 |
 
 ### Batch 2 — agile.ts (9 tools)
 
@@ -432,3 +441,60 @@ Plugin absent: `sn_hr_core_case` returns INVALID_REQUEST on PDI. All 16 tools sk
 
 **Batch 18 total: 9 Pass, 1 Fail, 0 Fishy, 0 Skipped**
 **Fail escalation: `ml_model_training_history` (invalid table ml_solution_version)**
+
+### Batch 19 — workspace.ts (16 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_uib_pages` | ✅ Pass | 3 UIB pages returned |
+| `get_uib_page` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `create_uib_page` | ✅ Pass | Created `__wave1_guard_test__` — cleanup: `b614173b83280310ad3cc4d0deaad32e` |
+| `update_uib_page` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `delete_uib_page` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_uib_components` | ✅ Pass | 3 macroponents returned |
+| `create_uib_component` | ✅ Pass | Created `wave1-guard-test` — cleanup: `e714173b83280310ad3cc4d0deaad3ea` |
+| `update_uib_component` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_uib_data_brokers` | ✅ Pass | 3 data brokers returned |
+| `create_uib_data_broker` | ✅ Pass | Created `wave1-guard-test` — cleanup: `a524973b83280310ad3cc4d0deaad39d` |
+| `list_workspaces` | ⏭️ Skip | INVALID_REQUEST: table `sys_aw_workspace` — Agent Workspace plugin absent |
+| `get_workspace` | ⏭️ Skip | INVALID_REQUEST: table `sys_aw_workspace` — Agent Workspace plugin absent |
+| `create_workspace` | ⏭️ Skip | INVALID_REQUEST: table `sys_aw_workspace` — Agent Workspace plugin absent |
+| `configure_workspace_list` | ✅ Pass | Created `sys_aw_list` record — cleanup: `3124973b83280310ad3cc4d0deaad3dc` |
+| `create_ux_app_route` | ✅ Pass | Created `sys_ux_app_route` record — cleanup: `0a24973b83280310ad3cc4d0deaad3f4` |
+| `create_ux_experience` | ✅ Pass | Created `sys_ux_app_config` record — cleanup: `4224973b83280310ad3cc4d0deaad3ff` |
+
+**Batch 19 total: 13 Pass, 0 Fail, 0 Fishy, 3 Skipped (Agent Workspace plugin absent)**
+
+### Batch 20 — mobile.ts (10 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_mobile_app_configs` | ⏭️ Skip | INVALID_REQUEST: table `sys_sg_mobile_app_config` — Mobile plugin absent |
+| `get_mobile_app_config` | ⏭️ Skip | INVALID_REQUEST: table `sys_sg_mobile_app_config` — Mobile plugin absent |
+| `create_mobile_app_config` | ⏭️ Skip | INVALID_REQUEST: table `sys_sg_mobile_app_config` — Mobile plugin absent |
+| `list_mobile_applets` | ⏭️ Skip | INVALID_REQUEST: table `sys_sg_mobile_applet` — Mobile plugin absent |
+| `create_mobile_applet` | ⏭️ Skip | INVALID_REQUEST: table `sys_sg_mobile_applet` — Mobile plugin absent |
+| `list_mobile_layouts` | ⏭️ Skip | INVALID_REQUEST: table `sys_sg_mobile_layout` — Mobile plugin absent |
+| `create_mobile_layout` | ⏭️ Skip | INVALID_REQUEST: table `sys_sg_mobile_layout` — Mobile plugin absent |
+| `configure_offline_sync` | ✅ Pass | Created `sys_sg_offline_sync` record — cleanup: `dd441f3b83280310ad3cc4d0deaad3a5` |
+| `send_push_notification` | ✅ Pass | Created `sys_push_notification` record — cleanup: `21445f3b83280310ad3cc4d0deaad303` |
+| `get_mobile_analytics` | ⏭️ Skip | INVALID_REQUEST: table `sys_sg_mobile_session` — Mobile plugin absent |
+
+**Batch 20 total: 2 Pass, 0 Fail, 0 Fishy, 8 Skipped (Mobile plugin absent)**
+
+### Batch 21 — deployment.ts (10 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `find_artifact` | ✅ Pass | Found `__guard_test__` script include by name pattern |
+| `validate_artifact` | ✅ Pass | Validated `__guard_test__` script include — PASS, 0 issues |
+| `clone_artifact` | ✅ Pass | NOT_FOUND (fake sys_id; requireScripting() succeeded) |
+| `validate_deployment` | ✅ Pass | NOT_FOUND (fake update_set_sys_id) |
+| `rollback_deployment` | ✅ Pass | NOT_FOUND (fake update_set_sys_id) |
+| `list_deployment_history` | ✅ Pass | 0 completed update sets in 7-day window |
+| `create_solution_package` | ✅ Pass | Returns message with update_set_count=1 (no API call) |
+| `execute_background_script` | ✅ Pass | Endpoint unavailable; caught gracefully (requireScripting() succeeded) |
+| `import_cmdb_data` | ✅ Pass | Created `cmdb_ci` `__wave1_guard_test__` — cleanup: `4f64137b83280310ad3cc4d0deaad302` |
+| `analyze_data_quality` | ✅ Pass | Analyzed incident table — 1 stale, 1 empty assigned_to |
+
+**Batch 21 total: 10 Pass, 0 Fail, 0 Fishy, 0 Skipped**
