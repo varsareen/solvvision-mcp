@@ -73,6 +73,9 @@ Test records created during Wave 1 guard testing — delete before branch merge:
 | `sn_customerservice_case` | `e4dd4bb383e40310ad3cc4d0deaad373` | `__wave1_guard_test__` (CS0001002) | Batch 2 |
 | `sys_hub_flow` | `357e4f3783e40310ad3cc4d0deaad3b9` | `__wave1_guard_test__` flow | Batch 6 |
 | `sys_hub_action_type_definition` | `d67e8f3783e40310ad3cc4d0deaad34d` | `__wave1_guard_test__` action | Batch 6 |
+| `sp_portal` | `433f87f783e40310ad3cc4d0deaad32f` | `__wave1_guard_test__` portal | Batch 7 |
+| `sp_page` | `a95f0ff783e40310ad3cc4d0deaad344` | `__wave1_guard_test__` page | Batch 7 |
+| `sp_widget` | `db3f87f783e40310ad3cc4d0deaad3aa` | `__wave1_guard_test__` widget | Batch 7 |
 
 ### Batch 2 — agile.ts (9 tools)
 
@@ -182,3 +185,27 @@ Plugin absent: `sn_hr_core_case` returns INVALID_REQUEST on PDI. All 16 tools sk
 
 **Batch 6 total: 9 Pass, 5 Fail, 0 Fishy, 2 Skipped**
 **New escalations: `trigger_flow`, `test_flow` (wrong trigger mechanism), `list_subflows`, `get_subflow`, `create_subflow` (wrong table sys_hub_subflow)**
+
+### Batch 7 — portal.ts (16 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_portals` | ✅ Pass | 3 portals returned |
+| `get_portal` | ✅ Pass | Returned "Service Portal" (url_suffix=sp) |
+| `list_portal_pages` | ⚠️ Fishy | 50 records returned for newly-created empty portal; `sp_portal` filter on `sp_page` appears ignored — escalate to Wave 2 |
+| `get_portal_page` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_portal_widgets` | ✅ Pass | 3 widgets returned |
+| `get_portal_widget` | ✅ Pass | Returned "Cool Clock" widget by id |
+| `list_widget_instances` | ✅ Pass | 0 results (fake widget_sys_id) |
+| `create_portal` | ✅ Pass | Created `__wave1_guard_test__` — cleanup: `433f87f783e40310ad3cc4d0deaad32f` |
+| `create_portal_page` | ✅ Pass | Created `__wave1_guard_test__` — cleanup: `a95f0ff783e40310ad3cc4d0deaad344` |
+| `create_portal_widget` | ✅ Pass | Created `__wave1_guard_test__` — cleanup: `db3f87f783e40310ad3cc4d0deaad3aa` |
+| `update_portal_widget` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_ux_apps` | ✅ Pass | 3 UX apps returned |
+| `get_ux_app` | ✅ Pass | NOT_FOUND (fake name) |
+| `list_ux_pages` | ⚠️ Fishy | 22 records returned for fake app_sys_id; `ux_app_config` filter on `sys_ux_page` appears ignored — escalate to Wave 2 |
+| `list_portal_themes` | ✅ Pass | 3 themes returned |
+| `get_portal_theme` | ✅ Pass | NOT_FOUND (fake sys_id) |
+
+**Batch 7 total: 14 Pass, 0 Fail, 2 Fishy, 0 Skipped**
+**Fishy escalations: `list_portal_pages` (sp_portal filter), `list_ux_pages` (ux_app_config filter)**
