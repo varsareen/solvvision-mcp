@@ -83,6 +83,10 @@ Test records created during Wave 1 guard testing — delete before branch merge:
 | `sysevent_email_action` | `cf0093bb83e40310ad3cc4d0deaad396` | `__wave1_guard_test__` notification | Batch 9 |
 | `sys_attachment` | `6c10d3bb83e40310ad3cc4d0deaad322` | `wave1_guard_test.txt` attachment | Batch 9 |
 | `sys_email` | `781017bb83e40310ad3cc4d0deaad338` | `__wave1_guard_test__` broadcast email | Batch 9 |
+| `sys_properties` | `d1b0d73f83e40310ad3cc4d0deaad373` | `x.wave1.guard.test.1` | Batch 11 |
+| `sys_properties` | _(name-based)_ | `x.wave1.guard.test.2` | Batch 11 |
+| `sys_update_set` | `05c09f3f83e40310ad3cc4d0deaad351` | `__wave1_guard_test__` update set | Batch 12 |
+| `sys_cs_topic` | `61c09f3f83e40310ad3cc4d0deaad3ca` | `__wave1_guard_test__` VA topic | Batch 13 |
 
 ### Batch 2 — agile.ts (9 tools)
 
@@ -287,3 +291,52 @@ Plugin absent: `sn_hr_core_case` returns INVALID_REQUEST on PDI. All 16 tools sk
 
 **Batch 10 total: 12 Pass, 3 Fail, 0 Fishy, 0 Skipped**
 **Fail escalations: `list_homepages` (wrong table sys_ui_hp), `list_pa_jobs` and `get_pa_job` (wrong table pa_job)**
+
+### Batch 11 — sys-properties.ts (11 tools, excl. get_system_property — pre-tested)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_system_properties` | ✅ Pass | 3 properties returned |
+| `search_system_properties` | ✅ Pass | 3 glide.smtp results |
+| `bulk_get_properties` | ✅ Pass | Both props not found on this PDI (correct) |
+| `export_properties` | ⚠️ Fishy | category=email filter ignored; returned all 500 props (PDI has no categorized properties — query silently ignored) — escalate to Wave 2 |
+| `validate_property` | ✅ Pass | glide.smtp.host not found, returns "would be created as new" |
+| `list_property_categories` | ✅ Pass | Only "(uncategorised)" category (998 records) |
+| `get_property_history` | ✅ Pass | 3 audit history entries for glide.smtp.host |
+| `set_system_property` | ✅ Pass | Created `x.wave1.guard.test.1` — cleanup: `d1b0d73f83e40310ad3cc4d0deaad373` |
+| `bulk_set_properties` | ✅ Pass | Created `x.wave1.guard.test.2` — cleanup: name-based delete |
+| `import_properties` | ✅ Pass | dry_run=true; showed "create" action (no writes) |
+| `delete_system_property` | ✅ Pass | `{deleted: false}` for nonexistent property |
+
+**Batch 11 total: 10 Pass, 0 Fail, 1 Fishy, 0 Skipped**
+**Fishy escalation: `export_properties` (category filter silently ignored)**
+
+### Batch 12 — updateset.ts (8 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `get_current_update_set` | ✅ Pass | 5 in-progress update sets returned |
+| `list_update_sets` | ✅ Pass | 3 update sets returned |
+| `create_update_set` | ✅ Pass | Created `__wave1_guard_test__` (switch_to=false) — cleanup: `05c09f3f83e40310ad3cc4d0deaad351` |
+| `switch_update_set` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `complete_update_set` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `preview_update_set` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `export_update_set` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `ensure_active_update_set` | ✅ Pass | Found existing in-progress update set |
+
+**Batch 12 total: 8 Pass, 0 Fail, 0 Fishy, 0 Skipped**
+
+### Batch 13 — va.ts (7 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `create_va_topic` | ✅ Pass | Created `__wave1_guard_test__` — cleanup: `61c09f3f83e40310ad3cc4d0deaad3ca` |
+| `update_va_topic` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `get_va_topic` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_va_topics_full` | ✅ Pass | 3 topics returned |
+| `get_va_conversation` | ❌ Fail | INVALID_REQUEST: table `sys_cs_conversation_message` does not exist — escalate to Wave 2 |
+| `list_va_conversations` | ✅ Pass | 0 results |
+| `list_va_categories` | ❌ Fail | INVALID_REQUEST: table `sys_cs_category` does not exist — escalate to Wave 2 |
+
+**Batch 13 total: 5 Pass, 2 Fail, 0 Fishy, 0 Skipped**
+**Fail escalations: `get_va_conversation` (wrong table sys_cs_conversation_message), `list_va_categories` (wrong table sys_cs_category)**
