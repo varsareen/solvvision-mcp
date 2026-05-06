@@ -71,6 +71,8 @@ Test records created during Wave 1 guard testing — delete before branch merge:
 | `rm_epic` | `e5bd0f7383e40310ad3cc4d0deaad3d1` | `__wave1_guard_test__` (EPIC0010001) | Batch 2 |
 | `rm_scrum_task` | `29bd4f7383e40310ad3cc4d0deaad303` | `__wave1_guard_test__` (STSK0011002) | Batch 2 |
 | `sn_customerservice_case` | `e4dd4bb383e40310ad3cc4d0deaad373` | `__wave1_guard_test__` (CS0001002) | Batch 2 |
+| `sys_hub_flow` | `357e4f3783e40310ad3cc4d0deaad3b9` | `__wave1_guard_test__` flow | Batch 6 |
+| `sys_hub_action_type_definition` | `d67e8f3783e40310ad3cc4d0deaad34d` | `__wave1_guard_test__` action | Batch 6 |
 
 ### Batch 2 — agile.ts (9 tools)
 
@@ -156,3 +158,27 @@ Plugin absent: `sn_hr_core_case` returns INVALID_REQUEST on PDI. All 16 tools sk
 | `list_audit_results` | ⏭️ Skip | sn_audit_result table absent (partial SecOps plugin) |
 
 **Batch 5 total: 16 Pass, 0 Fail, 0 Fishy, 3 Skipped**
+
+### Batch 6 — flow.ts (16 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_flows` | ✅ Pass | 3 flows returned |
+| `get_flow` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `trigger_flow` | ❌ Fail | INVALID_REQUEST: table `sys_hub_flow_trigger` does not exist; flows must be triggered via REST API — **escalate to Wave 2** |
+| `get_flow_execution` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `list_flow_executions` | ✅ Pass | 0 records (no executions for fake flow sys_id) |
+| `list_subflows` | ❌ Fail | INVALID_REQUEST: table `sys_hub_subflow` does not exist; subflows are stored in `sys_hub_flow` with `type=subflow` — **escalate to Wave 2** |
+| `get_subflow` | ❌ Fail | Same wrong table |
+| `list_action_instances` | ✅ Pass | 3 action instances |
+| `get_process_automation` | ⏭️ Skip | `pa_process` table absent — PAD plugin not installed on PDI |
+| `list_process_automations` | ⏭️ Skip | `pa_process` table absent |
+| `create_flow` | ✅ Pass | Created `__wave1_guard_test__` flow — cleanup: `357e4f3783e40310ad3cc4d0deaad3b9` |
+| `create_subflow` | ❌ Fail | Same wrong table `sys_hub_subflow` |
+| `create_flow_action` | ✅ Pass | Created `__wave1_guard_test__` action — cleanup: `d67e8f3783e40310ad3cc4d0deaad34d` |
+| `publish_flow` | ✅ Pass | NOT_FOUND (fake sys_id, guard removed) |
+| `test_flow` | ❌ Fail | Same wrong table `sys_hub_flow_trigger` |
+| `get_flow_error_log` | ✅ Pass | 0 records |
+
+**Batch 6 total: 9 Pass, 5 Fail, 0 Fishy, 2 Skipped**
+**New escalations: `trigger_flow`, `test_flow` (wrong trigger mechanism), `list_subflows`, `get_subflow`, `create_subflow` (wrong table sys_hub_subflow)**
