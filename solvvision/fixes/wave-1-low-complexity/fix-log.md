@@ -76,6 +76,10 @@ Test records created during Wave 1 guard testing — delete before branch merge:
 | `sp_portal` | `433f87f783e40310ad3cc4d0deaad32f` | `__wave1_guard_test__` portal | Batch 7 |
 | `sp_page` | `a95f0ff783e40310ad3cc4d0deaad344` | `__wave1_guard_test__` page | Batch 7 |
 | `sp_widget` | `db3f87f783e40310ad3cc4d0deaad3aa` | `__wave1_guard_test__` widget | Batch 7 |
+| `sys_rest_message` | `3e9f8b3b83e40310ad3cc4d0deaad346` | `__wave1_guard_test__` REST message | Batch 8 |
+| `sys_import_set_run` | `df9f8b3b83e40310ad3cc4d0deaad3e8` | TH0001112 (fake transform run) | Batch 8 |
+| `sysevent_register` | `0cafcb3b83e40310ad3cc4d0deaad3c9` | `wave1.guard_test` event registration | Batch 8 |
+| `sysevent` | `d0afcb3b83e40310ad3cc4d0deaad3f9` | `incident.created` fired event | Batch 8 |
 
 ### Batch 2 — agile.ts (9 tools)
 
@@ -209,3 +213,30 @@ Plugin absent: `sn_hr_core_case` returns INVALID_REQUEST on PDI. All 16 tools sk
 
 **Batch 7 total: 14 Pass, 0 Fail, 2 Fishy, 0 Skipped**
 **Fishy escalations: `list_portal_pages` (sp_portal filter), `list_ux_pages` (ux_app_config filter)**
+
+### Batch 8 — integration.ts (19 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_rest_messages` | ✅ Pass | 3 REST messages returned |
+| `get_rest_message` | ✅ Pass | NOT_FOUND (fake name) |
+| `list_rest_message_functions` | ✅ Pass | 0 results (fake rest_message_sys_id) |
+| `create_rest_message` | ✅ Pass | Created `__wave1_guard_test__` — cleanup: `3e9f8b3b83e40310ad3cc4d0deaad346` |
+| `list_transform_maps` | ✅ Pass | 3 maps returned |
+| `get_transform_map` | ✅ Pass | NOT_FOUND (fake name) |
+| `run_transform_map` | ✅ Pass | Created sys_import_set_run TH0001112 — cleanup: `df9f8b3b83e40310ad3cc4d0deaad3e8` |
+| `list_transform_field_maps` | ✅ Pass | 0 results (fake transform_map_sys_id) |
+| `list_import_sets` | ✅ Pass | 3 import sets returned |
+| `get_import_set` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `create_import_set_row` | ✅ Pass | INVALID_REQUEST (table doesn't exist) — guard removed |
+| `list_data_sources` | ✅ Pass | 3 data sources returned |
+| `list_event_registry` | ✅ Pass | 3 events returned |
+| `get_event_registry_entry` | ⚠️ Fishy | Query uses `name=` but field is `event_name` on sysevent_register; returns first record regardless of filter — escalate to Wave 2 |
+| `register_event` | ⚠️ Fishy | SCRIPTING_ENABLED=true; record created but `event_name` is empty — code sets `name` instead of `event_name` — cleanup: `0cafcb3b83e40310ad3cc4d0deaad3c9`; escalate to Wave 2 |
+| `fire_event` | ✅ Pass | Created sysevent record — cleanup: `d0afcb3b83e40310ad3cc4d0deaad3f9` |
+| `list_event_log` | ✅ Pass | 3 heartbeat events returned |
+| `list_oauth_applications` | ✅ Pass | 3 OAuth apps returned |
+| `list_credential_aliases` | ✅ Pass | 3 aliases returned |
+
+**Batch 8 total: 17 Pass, 0 Fail, 2 Fishy, 0 Skipped**
+**Fishy escalations: `get_event_registry_entry` and `register_event` (wrong field `name` vs `event_name` on sysevent_register)**
