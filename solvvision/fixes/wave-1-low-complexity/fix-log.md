@@ -65,3 +65,66 @@ Test records created during Wave 1 guard testing — delete before branch merge:
 | `sys_script_client` | `68dc47fb83640310ad3cc4d0deaad326` | `__wave1_guard_test__` | Batch 1 |
 | `sys_ui_policy` | `60dc07bb83a40310ad3cc4d0deaad309` | `__wave1_guard_test__` | Batch 1 |
 | `sys_ui_action` | `b8dc07bb83a40310ad3cc4d0deaad39d` | `__wave1_guard_test__` | Batch 1 |
+| `rm_story` | `cdbdcb7383e40310ad3cc4d0deaad3ce` | `__wave1_guard_test__` (STRY0010001) | Batch 2 |
+| `rm_epic` | `e5bd0f7383e40310ad3cc4d0deaad3d1` | `__wave1_guard_test__` (EPIC0010001) | Batch 2 |
+| `rm_scrum_task` | `29bd4f7383e40310ad3cc4d0deaad303` | `__wave1_guard_test__` (STSK0011002) | Batch 2 |
+| `sn_customerservice_case` | `e4dd4bb383e40310ad3cc4d0deaad373` | `__wave1_guard_test__` (CS0001002) | Batch 2 |
+
+### Batch 2 — agile.ts (9 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_stories` | ✅ Pass | 3 stories returned |
+| `list_epics` | ✅ Pass | 3 epics returned |
+| `list_scrum_tasks` | ✅ Pass | 3 scrum tasks returned |
+| `create_story` | ✅ Pass | Created STRY0010001 — cleanup needed |
+| `update_story` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `create_epic` | ✅ Pass | Created EPIC0010001 — cleanup needed |
+| `update_epic` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `create_scrum_task` | ✅ Pass | Created STSK0011002 — cleanup needed |
+| `update_scrum_task` | ✅ Pass | NOT_FOUND (fake sys_id) |
+
+**Batch 2 total: 9 Pass, 0 Fail, 0 Fishy, 0 Skipped**
+
+### Batch 3 — hrsd.ts (16 tools)
+
+Plugin absent: `sn_hr_core_case` returns INVALID_REQUEST on PDI. All 16 tools skipped.
+
+| Tool | Status | Notes |
+|---|---|---|
+| `create_hr_case` | ⏭️ Skip | HRSD plugin absent |
+| `get_hr_case` | ⏭️ Skip | HRSD plugin absent |
+| `update_hr_case` | ⏭️ Skip | HRSD plugin absent |
+| `list_hr_cases` | ⏭️ Skip | Probe: INVALID_REQUEST sn_hr_core_case |
+| `close_hr_case` | ⏭️ Skip | HRSD plugin absent |
+| `list_hr_services` | ⏭️ Skip | HRSD plugin absent |
+| `get_hr_service` | ⏭️ Skip | HRSD plugin absent |
+| `get_hr_profile` | ⏭️ Skip | HRSD plugin absent |
+| `update_hr_profile` | ⏭️ Skip | HRSD plugin absent |
+| `list_hr_tasks` | ⏭️ Skip | HRSD plugin absent |
+| `create_hr_task` | ⏭️ Skip | HRSD plugin absent |
+| `get_hr_case_activity` | ⏭️ Skip | HRSD plugin absent |
+| `create_onboarding_case` | ⏭️ Skip | HRSD plugin absent |
+| `create_offboarding_case` | ⏭️ Skip | HRSD plugin absent |
+| `get_hr_lifecycle_events` | ⏭️ Skip | HRSD plugin absent |
+| `list_hr_document_templates` | ⏭️ Skip | HRSD plugin absent |
+
+**Batch 3 total: 0 Pass, 0 Fail, 0 Fishy, 16 Skipped**
+
+### Batch 4 — csm.ts (11 tools)
+
+| Tool | Status | Notes |
+|---|---|---|
+| `list_csm_cases` | ✅ Pass | 3 cases returned |
+| `get_csm_case` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `update_csm_case` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `close_csm_case` | ✅ Pass | NOT_FOUND (fake sys_id) |
+| `create_csm_case` | ✅ Pass | Created CS0001002 — cleanup needed |
+| `get_csm_account` | ✅ Pass | NOT_FOUND (fake name) |
+| `list_csm_accounts` | ✅ Pass | 3 accounts returned |
+| `get_csm_contact` | ✅ Pass | NOT_FOUND (fake name) |
+| `list_csm_contacts` | ✅ Pass | 3 contacts returned |
+| `get_csm_case_sla` | ✅ Pass | Empty results (no SLA on fake sys_id) |
+| `list_csm_products` | ✅ Pass | 3 products returned |
+
+**Batch 4 total: 11 Pass, 0 Fail, 0 Fishy, 0 Skipped**
