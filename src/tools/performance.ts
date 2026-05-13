@@ -109,18 +109,6 @@ export function getPerformanceToolDefinitions() {
         required: ['sys_id_or_name'],
       },
     },
-    {
-      name: 'list_homepages',
-      description: 'List homepage dashboards (CMS content pages used as homepages)',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          query: { type: 'string', description: 'Search by title' },
-          limit: { type: 'number', description: 'Max records to return (default 25)' },
-        },
-        required: [],
-      },
-    },
     // ── PA Jobs ──────────────────────────────────────────────────────────────
     {
       name: 'list_pa_jobs',
@@ -353,23 +341,13 @@ export async function executePerformanceToolCall(
       if (resp.count === 0) throw new ServiceNowError(`PA dashboard not found: ${args.sys_id_or_name}`, 'NOT_FOUND');
       return resp.records[0];
     }
-    case 'list_homepages': {
-      const parts: string[] = [];
-      if (args.query) parts.push(`titleCONTAINS${args.query}`);
-      return await client.queryRecords({
-        table: 'sys_ui_hp',
-        query: parts.join('^') || undefined,
-        limit: args.limit ?? 25,
-        fields: 'sys_id,title,roles,sys_updated_on',
-      });
-    }
     // ── PA Jobs ──────────────────────────────────────────────────────────────
     case 'list_pa_jobs': {
       const parts: string[] = [];
       if (args.active !== false) parts.push('active=true');
       if (args.query) parts.push(`nameCONTAINS${args.query}`);
       return await client.queryRecords({
-        table: 'pa_job',
+        table: 'sysauto_pa',
         query: parts.join('^') || '',
         limit: args.limit ?? 25,
         fields: 'sys_id,name,active,schedule,sys_updated_on',
@@ -377,7 +355,7 @@ export async function executePerformanceToolCall(
     }
     case 'get_pa_job': {
       if (!args.sys_id) throw new ServiceNowError('sys_id is required', 'INVALID_REQUEST');
-      return await client.getRecord('pa_job', args.sys_id);
+      return await client.getRecord('sysauto_pa', args.sys_id);
     }
     // ── Data Quality ─────────────────────────────────────────────────────────
     case 'check_table_completeness': {
