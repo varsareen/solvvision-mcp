@@ -147,20 +147,6 @@ export function getFlowToolDefinitions() {
       },
     },
     {
-      name: 'create_subflow',
-      description: 'Create a new reusable subflow. **[Write]**',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          name: { type: 'string', description: 'Subflow name' },
-          description: { type: 'string', description: 'Subflow description' },
-          inputs: { type: 'array', items: { type: 'object' }, description: 'Input variable definitions [{name, type, mandatory}]' },
-          scope: { type: 'string', description: 'Application scope' },
-        },
-        required: ['name'],
-      },
-    },
-    {
       name: 'create_flow_action',
       description: 'Create a custom Flow Designer action. **[Scripting]**',
       inputSchema: {
@@ -255,17 +241,21 @@ export async function executeFlowToolCall(
       return await client.queryRecords({ table: 'sys_flow_context', query: parts.join('^'), limit: args.limit ?? 25 });
     }
     case 'list_subflows': {
-      const parts: string[] = [];
+      const parts: string[] = ['type=subflow'];
       if (args.active !== false) parts.push('active=true');
       if (args.query) parts.push(`nameCONTAINS${args.query}`);
-      return await client.queryRecords({ table: 'sys_hub_subflow', query: parts.join('^') || '', limit: args.limit ?? 50 });
+      return await client.queryRecords({ table: 'sys_hub_flow', query: parts.join('^'), limit: args.limit ?? 50 });
     }
     case 'get_subflow': {
       if (!args.name_or_sysid) throw new ServiceNowError('name_or_sysid is required', 'INVALID_REQUEST');
       if (/^[0-9a-f]{32}$/i.test(args.name_or_sysid)) {
-        return await client.getRecord('sys_hub_subflow', args.name_or_sysid);
+        const record = await client.getRecord('sys_hub_flow', args.name_or_sysid);
+        if (record && (record as any).type !== 'subflow') {
+          throw new ServiceNowError(`Record ${args.name_or_sysid} is not a subflow`, 'NOT_FOUND');
+        }
+        return record;
       }
-      const resp = await client.queryRecords({ table: 'sys_hub_subflow', query: `nameCONTAINS${args.name_or_sysid}`, limit: 1 });
+      const resp = await client.queryRecords({ table: 'sys_hub_flow', query: `type=subflow^nameCONTAINS${args.name_or_sysid}`, limit: 1 });
       if (resp.count === 0) throw new ServiceNowError(`Subflow not found: ${args.name_or_sysid}`, 'NOT_FOUND');
       return resp.records[0];
     }
@@ -294,12 +284,6 @@ export async function executeFlowToolCall(
       requireWrite();
       if (!args.name) throw new ServiceNowError('name is required', 'INVALID_REQUEST');
       const result = await client.createRecord('sys_hub_flow', { name: args.name, active: 'false', ...(args.description ? { description: args.description } : {}), ...(args.trigger_type ? { trigger_type: args.trigger_type } : {}), ...(args.trigger_table ? { trigger_table: args.trigger_table } : {}), ...(args.scope ? { sys_scope: args.scope } : {}) });
-      return { action: 'created', ...result };
-    }
-    case 'create_subflow': {
-      requireWrite();
-      if (!args.name) throw new ServiceNowError('name is required', 'INVALID_REQUEST');
-      const result = await client.createRecord('sys_hub_subflow', { name: args.name, active: 'false', ...(args.description ? { description: args.description } : {}), ...(args.scope ? { sys_scope: args.scope } : {}) });
       return { action: 'created', ...result };
     }
     case 'create_flow_action': {
