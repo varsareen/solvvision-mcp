@@ -97,7 +97,7 @@ export function getCatalogToolDefinitions() {
       name: 'create_approval_rule',
       description:
         'Create an approval rule that automatically generates approval requests when a record matches given conditions (requires WRITE_ENABLED=true). ' +
-        'Uses the sysapproval_rule table.',
+        'Uses the sysrule_approvals table.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -306,7 +306,7 @@ export async function executeCatalogToolCall(
         data.approver = args.approver;
       }
       if (args.condition) data.condition = args.condition;
-      const result = await client.createRecord('sysapproval_rule', data);
+      const result = await client.createRecord('sysrule_approvals', data);
       return {
         ...result,
         summary: `Created approval rule "${args.name}" for table "${args.table}" with ${args.approver_type} approver`,
