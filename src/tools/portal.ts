@@ -71,11 +71,13 @@ export function getPortalToolDefinitions() {
     },
     {
       name: 'list_portal_pages',
-      description: 'List pages that belong to a Service Portal',
+      description:
+        'List Service Portal pages in the same application scope as the given portal. ' +
+        'Note: scope-level filter — pages from sibling portals in the same scope will also be returned.',
       inputSchema: {
         type: 'object',
         properties: {
-          portal_sys_id: { type: 'string', description: 'sys_id of the parent portal' },
+          portal_sys_id: { type: 'string', description: 'sys_id of the parent portal (used to resolve app scope)' },
           query: { type: 'string', description: 'Filter pages by title or id' },
           limit: { type: 'number', description: 'Max records to return (default 50)' },
         },
@@ -188,11 +190,13 @@ export function getPortalToolDefinitions() {
     },
     {
       name: 'list_ux_pages',
-      description: 'List pages within a Next Experience (UI Builder) application',
+      description:
+        'List UX Builder pages in the same application scope as the given UX app. ' +
+        'Note: scope-level filter — pages from sibling apps in the same scope will also be returned.',
       inputSchema: {
         type: 'object',
         properties: {
-          app_sys_id: { type: 'string', description: 'Parent UX app sys_id' },
+          app_sys_id: { type: 'string', description: 'sys_id of the UX app config (used to resolve app scope)' },
           query: { type: 'string', description: 'Filter pages by name' },
           limit: { type: 'number', description: 'Max records to return (default 50)' },
         },
@@ -285,13 +289,19 @@ export async function executePortalToolCall(
     }
     case 'list_portal_pages': {
       if (!args.portal_sys_id) throw new ServiceNowError('portal_sys_id is required', 'INVALID_REQUEST');
-      const parts = [`sp_portal=${args.portal_sys_id}`];
+      // Step 1: resolve the portal's application scope
+      const portalRecord = await client.getRecord('sp_portal', args.portal_sys_id);
+      const scopeRef = (portalRecord as any)?.sys_scope;
+      const scopeSysId = typeof scopeRef === 'object' ? scopeRef?.value : scopeRef;
+      if (!scopeSysId) throw new ServiceNowError('Could not resolve scope for portal', 'NOT_FOUND');
+      // Step 2: query sp_page by scope
+      const parts = [`sys_scope=${scopeSysId}`];
       if (args.query) parts.push(`titleCONTAINS${args.query}^ORidCONTAINS${args.query}`);
       return await client.queryRecords({
         table: 'sp_page',
         query: parts.join('^'),
         limit: args.limit ?? 50,
-        fields: 'sys_id,title,id,sp_portal,sys_updated_on',
+        fields: 'sys_id,title,id,sp_portal,sys_scope,sys_updated_on',
       });
     }
     case 'get_portal_page': {
@@ -384,13 +394,19 @@ export async function executePortalToolCall(
     }
     case 'list_ux_pages': {
       if (!args.app_sys_id) throw new ServiceNowError('app_sys_id is required', 'INVALID_REQUEST');
-      const parts = [`ux_app_config=${args.app_sys_id}`];
+      // Step 1: resolve the UX app's application scope
+      const appRecord = await client.getRecord('sys_ux_app_config', args.app_sys_id);
+      const appScopeRef = (appRecord as any)?.sys_scope;
+      const appScopeSysId = typeof appScopeRef === 'object' ? appScopeRef?.value : appScopeRef;
+      if (!appScopeSysId) throw new ServiceNowError('Could not resolve scope for UX app', 'NOT_FOUND');
+      // Step 2: query sys_ux_page by scope
+      const parts = [`sys_scope=${appScopeSysId}`];
       if (args.query) parts.push(`nameCONTAINS${args.query}`);
       return await client.queryRecords({
         table: 'sys_ux_page',
         query: parts.join('^'),
         limit: args.limit ?? 50,
-        fields: 'sys_id,name,ux_app_config,sys_updated_on',
+        fields: 'sys_id,name,sys_scope,sys_updated_on',
       });
     }
     // ── Themes ──────────────────────────────────────────────────────────────
