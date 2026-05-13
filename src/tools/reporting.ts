@@ -404,14 +404,14 @@ export async function executeReportingToolCall(
     }
     case 'list_job_run_history': {
       const parts: string[] = [];
-      if (args.job_sys_id) parts.push(`sysauto=${args.job_sys_id}`);
-      if (args.status) parts.push(`status=${args.status}`);
+      if (args.job_sys_id) parts.push(`sys_id=${args.job_sys_id}`);
+      if (args.status) parts.push(`job_classification=${args.status}`);
       const resp = await client.queryRecords({
-        table: 'sysauto_trigger_log',
+        table: 'sys_scheduler_job_history',
         query: parts.join('^') || undefined,
         limit: args.limit || 25,
         orderBy: '-sys_created_on',
-        fields: 'sys_id,sysauto,status,run_time,error_message,sys_created_on',
+        fields: 'sys_id,job_classification,count,average,max_duration,time_range_start,time_range_end,sys_created_on',
       });
       return { count: resp.count, history: resp.records };
     }
@@ -419,7 +419,7 @@ export async function executeReportingToolCall(
       requireWrite();
       if (!args.report_id || !args.frequency || !args.recipients)
         throw new ServiceNowError('report_id, frequency, and recipients are required', 'INVALID_REQUEST');
-      const result = await client.createRecord('sys_report_schedule', {
+      const result = await client.createRecord('sysauto_report', {
         report: args.report_id,
         frequency: args.frequency,
         email: args.recipients,
