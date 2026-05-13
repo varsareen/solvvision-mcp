@@ -417,7 +417,7 @@ export async function executeIntegrationToolCall(
       }
       const resp = await client.queryRecords({
         table: 'sysevent_register',
-        query: `name=${args.name_or_sysid}`,
+        query: `event_name=${args.name_or_sysid}`,
         limit: 1,
       });
       if (resp.count === 0) {
@@ -429,7 +429,7 @@ export async function executeIntegrationToolCall(
       requireScripting();
       if (!args.name || !args.table) throw new ServiceNowError('name and table are required', 'INVALID_REQUEST');
       const data = {
-        name: args.name,
+        event_name: args.name,
         table: args.table,
         description: args.description || '',
       };
